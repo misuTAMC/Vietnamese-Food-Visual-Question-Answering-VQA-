@@ -42,19 +42,7 @@ Pipeline được triển khai bằng PyTorch, bao gồm:
 6. Tối ưu hóa với AdamW, gradient accumulation, gradient clipping và cosine learning-rate scheduler.
 7. Theo dõi validation loss, lưu checkpoint và áp dụng early stopping.
 
-## 4. Điểm nổi bật: Debugging lỗi label masking
-
-Trong quá trình phát triển, mô hình sau fine-tuning ban đầu đạt kết quả đánh giá giống hệt mô hình nền, mặc dù quá trình huấn luyện vẫn chạy bình thường.
-
-Qua kiểm tra, vấn đề được xác định nằm ở cách căn chỉnh nhãn trong data collator. Cơ chế xử lý đầu vào đa phương thức của Qwen2-VL, bao gồm việc mở rộng token hình ảnh động, khiến ranh giới giữa prompt và câu trả lời cần được xác định chính xác.
-
-**Cách khắc phục:** Điều chỉnh logic masking bằng cách xác định ranh giới lượt trả lời của assistant trực tiếp trong token IDs, sau đó mask phần prompt trước ranh giới này.
-
-Việc sửa lỗi giúp loss được tính trên các token câu trả lời mục tiêu, thay vì vô tình giám sát sai phần đầu vào.
-
-Bài học rút ra: training loss giảm không đồng nghĩa với việc mô hình đã học đúng mục tiêu. Cần kiểm tra dữ liệu, nhãn giám sát và kết quả evaluation để xác nhận pipeline hoạt động đúng.
-
-## 5. Phương pháp đánh giá
+## 4. Phương pháp đánh giá
 
 Dự án kết hợp các chỉ số đo độ tương đồng từ vựng và độ tương đồng ngữ nghĩa.
 
@@ -73,7 +61,7 @@ Dự án kết hợp các chỉ số đo độ tương đồng từ vựng và �
 - **BERTScore:** Đo độ tương đồng ngữ nghĩa bằng biểu diễn ngữ cảnh từ PhoBERT.
 - **Exact Match:** Đo tỷ lệ câu trả lời khớp chính xác với câu tham chiếu.
 
-## 6. Kết quả thực nghiệm
+## 5. Kết quả thực nghiệm
 
 | Chỉ số | Trước fine-tuning | Sau fine-tuning |
 |---|---:|---:|
@@ -91,9 +79,3 @@ Vì vậy, ROUGE-L và BERTScore được sử dụng bổ sung để đánh gi�
 
 
 
-## 9. Hạn chế và hướng phát triển
-
-- Phân tích lỗi theo từng nhóm câu hỏi và nhóm món ăn.
-- Đánh giá khả năng tổng quát hóa trên các nhóm món ăn chưa xuất hiện trong tập huấn luyện.
-- Bổ sung ví dụ dự đoán và biểu đồ train/validation loss.
-- Tài liệu hóa đầy đủ workflow evaluation và cấu hình metric để tăng khả năng tái lập kết quả.
